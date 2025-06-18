@@ -16,11 +16,11 @@ import java.util.Objects;
 public abstract class Employee extends Person {
 
     private BigDecimal salary = BigDecimal.ZERO;
+    private WorkShiftType workShift;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "paySheet_id")
     private PaySheet paySheet;
-    private WorkShiftType workShift;
     @ManyToOne
     @JoinColumn(name = "departament_id")
     private Department department;

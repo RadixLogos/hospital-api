@@ -12,6 +12,7 @@ INSERT INTO tb_person(name, last_name, nationality, gender, cpf, birth_date, tel
 INSERT INTO tb_person(name, last_name, nationality, gender, cpf, birth_date, telephone_number, cellphone_number, email, hospital_id, city, state, street_name, neighborhood, number, zip_code, complement) VALUES ('Aline', 'Rocha', 1, 1, '88888888888', '1990-11-11', '+554132255496', '+5541998852016', 'aline.rocha@example.com', 2, 'Belém', 'Pará', 'Rua dos Jacarandás', 'Nazaré', '208', '66000000', 'Próximo à basílica');
 INSERT INTO tb_person(name, last_name, nationality, gender, cpf, birth_date, telephone_number, cellphone_number, email, hospital_id, city, state, street_name, neighborhood, number, zip_code, complement) VALUES ('Anderson', 'Costa', 0, 0, '99999999999', '1991-06-06', '+554132255497', '+5541998852017', 'anderson.costa@example.com', 1, 'Campo Grande', 'Mato Grosso do Sul', 'Av. Mato Grosso', 'Centro', '209', '79000000', 'Ao lado do shopping');
 INSERT INTO tb_person(name, last_name, nationality, gender, cpf, birth_date, telephone_number, cellphone_number, email, hospital_id, city, state, street_name, neighborhood, number, zip_code, complement) VALUES ('Patrícia', 'Silveira', 0, 1, '00000000000', '1983-08-08', '+554132255498', '+5541998852018', 'patricia.silveira@example.com', 2, 'Aracaju', 'Sergipe', 'Rua São Cristóvão', 'Centro', '210', '49000000', 'Ao lado da rodoviária');
+INSERT INTO tb_person(name, last_name, nationality, gender, cpf, birth_date, telephone_number, cellphone_number, email, hospital_id, city, state, street_name, neighborhood, number, zip_code, complement) VALUES ('Lucas', 'Mendonça', 1, 0, '10101010101', '1992-05-15', '+554132255499', '+5541998852019', 'lucas.mendonca@example.com', 1, 'Curitiba', 'Paraná', 'Rua das Acácias', 'Centro', '211', '88000000', 'Próximo ao mercado central');
 
 
 INSERT INTO TB_USER(email, password, role, person_id) VALUES('adam@gmail.com','$2a$10$123456HASHAQUI',1,1);
@@ -38,3 +39,9 @@ INSERT INTO TB_PATIENT(id,mothers_name, profession) VALUES (8,'Sebastiana Olivei
 INSERT INTO TB_PATIENT(id,mothers_name, profession) VALUES (9,'Teresa Fernandes', 'Secretária');
 INSERT INTO TB_PATIENT(id,mothers_name, profession) VALUES (10,'Catarina Gomes', 'Auxiliar de Limpeza');
 INSERT INTO TB_PATIENT(id,mothers_name, profession) VALUES (11,'Rita Costa', 'Bordadeira');
+
+INSERT INTO TB_EMPLOYEE(id, salary, work_shift) values(12,20700.0,0);
+
+INSERT INTO TB_DOCTOR(id,professional_registration, specialty) VALUES(12,'CRM-PR 23564',0);
+
+INSERT INTO TB_SCHEDULE(schedule_date, schedule_type, hospital_service_type, city, state, street_name, neighborhood, number, zip_code, complement, patient_id, doctor_id) values ('2025-07-20',0,0,'Curitiba','Paraná','Petrópolis','Centro','166','88356254','Próximo ao terminal de ônibus',1,12);

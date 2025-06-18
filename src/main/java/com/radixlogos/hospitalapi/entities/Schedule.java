@@ -3,7 +3,6 @@ package com.radixlogos.hospitalapi.entities;
 import com.radixlogos.hospitalapi.enums.HospitalServiceType;
 import com.radixlogos.hospitalapi.enums.ScheduleType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 
 import java.io.Serializable;
@@ -19,7 +18,7 @@ public class Schedule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate scheduleDate;
     @Column(nullable = false)
     private ScheduleType scheduleType;
     @Column(name = "hospital_service_type", nullable = false)
@@ -36,9 +35,12 @@ public class Schedule implements Serializable {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
+    public Schedule() {
+    }
+
     // The address or the link for tele-consultation are added after the schedule been created
     public Schedule(LocalDate date, ScheduleType scheduleType, HospitalServiceType hospitalServiceType, Patient patient, Doctor doctor) {
-        this.date = date;
+        this.scheduleDate = date;
         this.scheduleType = scheduleType;
         this.hospitalServiceType = hospitalServiceType;
         this.patient = patient;
@@ -49,12 +51,12 @@ public class Schedule implements Serializable {
         return id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getScheduleDate() {
+        return scheduleDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setScheduleDate(LocalDate scheduleDate) {
+        this.scheduleDate = scheduleDate;
     }
 
     public ScheduleType getScheduleType() {
