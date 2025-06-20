@@ -2,20 +2,25 @@ package com.radixlogos.hospitalapi.services;
 
 
 import com.radixlogos.hospitalapi.dtos.insertions.UserInsertDTO;
+import com.radixlogos.hospitalapi.dtos.login.LoginRequestDTO;
+import com.radixlogos.hospitalapi.dtos.responses.JwtResponseDTO;
 import com.radixlogos.hospitalapi.dtos.responses.UserResponseDTO;
 import com.radixlogos.hospitalapi.entities.User;
 import com.radixlogos.hospitalapi.enums.RoleType;
 import com.radixlogos.hospitalapi.repositories.UserRepository;
+import com.radixlogos.hospitalapi.security.JwtUtil;
 import com.radixlogos.hospitalapi.services.exceptions.AlreadyExistsException;
+import com.radixlogos.hospitalapi.services.exceptions.InvalidPasswordException;
 import com.radixlogos.hospitalapi.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -25,7 +30,21 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
+    @Transactional(readOnly = true)
+    public JwtResponseDTO loginByEmail(LoginRequestDTO login){
+        Optional<User> user = userRepository.findByEmail(login.email());
+        if(user.isEmpty()){
+            throw new UsernameNotFoundException("Email inválido!");
+        }
+        var entityUser = user.get();
+        if(!passwordEncoder.matches(login.password(), entityUser.getPassword())){
+            throw new InvalidPasswordException("Senha inválida!");
+        }
+        return new JwtResponseDTO(jwtUtil.generateToken(login.email()));
+    }
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAllUsers(Pageable pageable){
         return userRepository.findAll(pageable).map(UserResponseDTO::fromUser);

@@ -1,4 +1,4 @@
-package com.radixlogos.hospitalapi.configurations;
+package com.radixlogos.hospitalapi.security.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
