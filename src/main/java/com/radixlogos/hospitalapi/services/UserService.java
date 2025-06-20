@@ -32,6 +32,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private AuditLogService auditLogService;
 
     @Transactional(readOnly = true)
     public JwtResponseDTO loginByEmail(LoginRequestDTO login){
@@ -43,10 +45,12 @@ public class UserService {
         if(!passwordEncoder.matches(login.password(), entityUser.getPassword())){
             throw new InvalidPasswordException("Senha inválida!");
         }
+        auditLogService.logAction("Login realizado");
         return new JwtResponseDTO(jwtUtil.generateToken(login.email()));
     }
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAllUsers(Pageable pageable){
+        auditLogService.logAction("Busca por todos os usuários do sistema");
         return userRepository.findAll(pageable).map(UserResponseDTO::fromUser);
     }
 
@@ -54,7 +58,8 @@ public class UserService {
     public UserResponseDTO findUserById(Long id){
          var entity = userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Usuário não encontrado"));
-        return UserResponseDTO.fromUser(entity);
+        auditLogService.logAction("Busca por usuário com id " + id);
+         return UserResponseDTO.fromUser(entity);
     }
     @Transactional
     public UserResponseDTO insertUser(UserInsertDTO insertDTO) {
@@ -63,6 +68,7 @@ public class UserService {
         User entity = new User();
         copyDtoToEntity(entity, insertDTO);
         entity = userRepository.save(entity);
+        auditLogService.logAction("Usuário inserido");
         return UserResponseDTO.fromUser(entity);
     }
 
@@ -74,6 +80,7 @@ public class UserService {
         var entityUser = userRepository.getReferenceById(id);
         entityUser.setRole(role);
         userRepository.save(entityUser);
+        auditLogService.logAction("Papel " + role.toString() + " concedido ao usuário com id " + id);
         return UserResponseDTO.fromUser(entityUser);
     }
 
@@ -87,6 +94,7 @@ public class UserService {
         entity.setEmail(insertDTO.email());
         entity.setPassword(passwordEncoder.encode(insertDTO.password()));
         userRepository.save(entity);
+        auditLogService.logAction("Atualização de usuário com id " + id);
         return UserResponseDTO.fromUser(entity);
     }
 
@@ -96,6 +104,7 @@ public class UserService {
             throw new ResourceNotFoundException("Usuário não encontrado");
         }
         userRepository.deleteById(id);
+        auditLogService.logAction("Deletou usuário com id " + id );
     }
 
     private void copyDtoToEntity(User entityUser,UserInsertDTO insertDTO) {

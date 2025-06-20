@@ -12,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ScheduleService {
     @Autowired
-    ScheduleRepository scheduleRepository;
+    private ScheduleRepository scheduleRepository;
     @Autowired
-    PatientRepository patientRepository;
+    private PatientRepository patientRepository;
+    @Autowired
+    private AuditLogService auditLogService;
 
     @Transactional(readOnly = true)
     public ScheduleResponseDTO findScheduleByPatient(Long patientId){
@@ -24,7 +26,7 @@ public class ScheduleService {
         var patient = patientRepository.getReferenceById(patientId);
         var entitySchedule = scheduleRepository.findByPatient(patient)
                 .orElseThrow(() -> new ResourceNotFoundException("Agendamento não encontrado"));
-
+        auditLogService.logAction("Busca de agendamento de paciente com id " + patientId);
         return ScheduleResponseDTO.fromSchedule(entitySchedule);
     }
 }

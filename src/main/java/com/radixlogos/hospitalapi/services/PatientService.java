@@ -24,14 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PatientService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    PatientRepository patientRepository;
+    private  PatientRepository patientRepository;
     @Autowired
-    HospitalRepository hospitalRepository;
+    private HospitalRepository hospitalRepository;
+    @Autowired
+    private AuditLogService auditLogService;
 
     @Transactional(readOnly = true)
     public Page<PatientFullResponseDTO> findAllPatients(Pageable pageable){
+        auditLogService.logAction("Buscou todos os pacientes registrados");
         return patientRepository.findAll(pageable).map(PatientFullResponseDTO::fromPatient);
     }
 
@@ -39,6 +42,7 @@ public class PatientService {
     public PatientResponseDTO findPatientById(Long id){
         var entityPatient = patientRepository.findById(id)
                 .orElseThrow(() ->new ResourceNotFoundException("Paciente não encontrado"));
+        auditLogService.logAction("Buscou paciente com id " + id);
         return PatientResponseDTO.fromPatient(entityPatient);
     }
 
@@ -59,6 +63,7 @@ public class PatientService {
         entityUser.setPerson(entityPatient);
         entityUser.setRole(RoleType.PATIENT);
         patientRepository.save(entityPatient);
+        auditLogService.logAction("Inseriu nova paciente com id " + entityPatient.getId() );
         return PatientResponseDTO.fromPatient(entityPatient);
     }
 
@@ -78,6 +83,7 @@ public class PatientService {
         var entityPatient = patientRepository.getReferenceById(id);
         copyDtoToEntity(entityPatient,insertDTO,hospitalEntity);
         entityPatient = patientRepository.save(entityPatient);
+        auditLogService.logAction("Atualizou paciente com id " + id);
         return PatientResponseDTO.fromPatient(entityPatient);
     }
 
@@ -88,7 +94,7 @@ public class PatientService {
         }
         try {
             patientRepository.deleteById(id);
-
+            auditLogService.logAction("Deletou paciente com id " + id);
         }catch (DataIntegrityViolationException e){
             throw new ConstraintException("Problema de violação referencial");
         }

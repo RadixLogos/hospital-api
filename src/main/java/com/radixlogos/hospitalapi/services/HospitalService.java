@@ -2,7 +2,9 @@ package com.radixlogos.hospitalapi.services;
 
 import com.radixlogos.hospitalapi.dtos.insertions.hospital.HospitalInsertDTO;
 import com.radixlogos.hospitalapi.dtos.responses.HospitalResponseDTO;
+import com.radixlogos.hospitalapi.entities.AuditLog;
 import com.radixlogos.hospitalapi.entities.Hospital;
+import com.radixlogos.hospitalapi.repositories.AuditLogRepository;
 import com.radixlogos.hospitalapi.repositories.HospitalRepository;
 import com.radixlogos.hospitalapi.services.exceptions.AlreadyExistsException;
 import com.radixlogos.hospitalapi.services.exceptions.ConstraintException;
@@ -18,15 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
+    @Autowired
+    private AuditLogService auditLogService;
 
     @Transactional(readOnly = true)
     public HospitalResponseDTO findHospitalById(Long id){
         var entityHospital = hospitalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Hospital  não encontrado"));
+        auditLogService.logAction("Buscou hospital com o id" + id);
         return HospitalResponseDTO.fromHospital(entityHospital);
     }
 
     @Transactional(readOnly = true)
     public Page<HospitalResponseDTO> findAllHospitals(Pageable pageable){
+        auditLogService.logAction("Buscou todos os registros de hospitais");
         return hospitalRepository.findAll(pageable).map(HospitalResponseDTO::fromHospital);
     }
 
@@ -38,6 +44,7 @@ public class HospitalService {
         var entityHospital = new Hospital();
         copyDtoToEntity(insertDTO, entityHospital);
         hospitalRepository.save(entityHospital);
+        auditLogService.logAction("Cadastrou novo hospital com id " + entityHospital.getId());
         return HospitalResponseDTO.fromHospital(entityHospital);
     }
 
@@ -49,6 +56,7 @@ public class HospitalService {
         var entityHospital = hospitalRepository.getReferenceById(id);
         copyDtoToEntity(insertDTO, entityHospital);
         hospitalRepository.save(entityHospital);
+        auditLogService.logAction("Atualizou hospital com o id" + id);
         return HospitalResponseDTO.fromHospital(entityHospital);
     }
 
@@ -58,6 +66,7 @@ public class HospitalService {
         }
         try{
             hospitalRepository.deleteById(id);
+            auditLogService.logAction("Deletou hospital com o id" + id);
         }catch(DataIntegrityViolationException e){
             throw new ConstraintException("Problema de violação referencial");
         }
