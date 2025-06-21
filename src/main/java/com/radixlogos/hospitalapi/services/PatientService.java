@@ -10,6 +10,7 @@ import com.radixlogos.hospitalapi.enums.RoleType;
 import com.radixlogos.hospitalapi.repositories.HospitalRepository;
 import com.radixlogos.hospitalapi.repositories.PatientRepository;
 import com.radixlogos.hospitalapi.repositories.UserRepository;
+import com.radixlogos.hospitalapi.services.exceptions.AlreadyExistsException;
 import com.radixlogos.hospitalapi.services.exceptions.ConstraintException;
 import com.radixlogos.hospitalapi.services.exceptions.NullValueException;
 import com.radixlogos.hospitalapi.services.exceptions.ResourceNotFoundException;
@@ -54,7 +55,9 @@ public class PatientService {
         if(!userRepository.existsById(userId)){
             throw new ResourceNotFoundException("Usuário não encontrado");
         }
-
+        if(patientRepository.existsByCpf(inDTO.person().cpf())){
+            throw new AlreadyExistsException("Paciente já cadastrado");
+        }
         var entityHospital = hospitalRepository.getReferenceById(hospitalId);
         var entityUser = userRepository.getReferenceById(userId);
         var entityPatient = new Patient();
@@ -63,7 +66,7 @@ public class PatientService {
         entityUser.setPerson(entityPatient);
         entityUser.setRole(RoleType.PATIENT);
         patientRepository.save(entityPatient);
-        auditLogService.logAction("Inseriu nova paciente com id " + entityPatient.getId() );
+        auditLogService.logAction("Inseriu novo paciente com id " + entityPatient.getId() );
         return PatientResponseDTO.fromPatient(entityPatient);
     }
 
@@ -93,7 +96,9 @@ public class PatientService {
             throw new ResourceNotFoundException("Paciente não encontrado");
         }
         try {
-            patientRepository.deleteById(id);
+            var patient = patientRepository.getReferenceById(id);
+            var userPatient = userRepository.findByPerson(patient).get();
+            userRepository.deleteById(userPatient.getId());
             auditLogService.logAction("Deletou paciente com id " + id);
         }catch (DataIntegrityViolationException e){
             throw new ConstraintException("Problema de violação referencial");

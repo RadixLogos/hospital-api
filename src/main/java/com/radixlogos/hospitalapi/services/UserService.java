@@ -48,6 +48,7 @@ public class UserService {
         auditLogService.logAction("Login realizado");
         return new JwtResponseDTO(jwtUtil.generateToken(login.email()));
     }
+
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAllUsers(Pageable pageable){
         auditLogService.logAction("Busca por todos os usuários do sistema");

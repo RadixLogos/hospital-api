@@ -1,5 +1,4 @@
 package com.radixlogos.hospitalapi.services;
-
 import com.radixlogos.hospitalapi.entities.AuditLog;
 import com.radixlogos.hospitalapi.repositories.AuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;

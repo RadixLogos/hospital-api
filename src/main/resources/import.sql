@@ -26,7 +26,7 @@ INSERT INTO tb_user(email, password, role, person_id) VALUES ('marcos.vieira@exa
 INSERT INTO tb_user(email, password, role, person_id) VALUES ('aline.rocha@example.com', '$2a$10$123456HASHAQUI', 1, 9);
 INSERT INTO tb_user(email, password, role, person_id) VALUES ('anderson.costa@example.com', '$2a$10$123456HASHAQUI', 1, 10);
 INSERT INTO tb_user(email, password, role, person_id) VALUES ('patricia.silveira@example.com', '$2a$10$123456HASHAQUI', 1, 11)
-INSERT INTO TB_USER(email, password) VALUES('exemple@gmail.com','$2a$10$123456HASHAQUI');
+INSERT INTO TB_USER(email, password) VALUES('marcopedro@gmail.com','$2a$10$123456HASHAQUI');
 
 INSERT INTO TB_PATIENT(id,mothers_name,profession) VALUES (1,'Eva','Agricultor');
 INSERT INTO TB_PATIENT(id,mothers_name, profession) VALUES (2,'Maria da Silva', 'Professor');

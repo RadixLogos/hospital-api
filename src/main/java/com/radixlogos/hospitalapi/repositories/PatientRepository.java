@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepository extends GeneralRepository<Patient, Long> {
-
+    boolean existsByCpf(String cpf);
 }
